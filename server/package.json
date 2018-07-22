@@ -1,0 +1,35 @@
+{
+  "name": "latency",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "nodemon src/index.js",
+    "server": "nodemon src/index.js",
+    "client": "nodemon src/client.js",
+    "build": "rimraf dist/ && babel ./ --out-dir dist/ --ignore ./node_modules",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "har preet singh",
+  "license": "ISC",
+  "dependencies": {
+    "appmetrics": "^4.0.0",
+    "appmetrics-dash": "^4.0.0",
+    "body-parser": "^1.18.3",
+    "cookie-parser": "^1.4.3",
+    "docker-service-api": "^17.12.19",
+    "express": "^4.16.3",
+    "http": "0.0.0",
+    "influx": "^5.0.7",
+    "net": "^1.0.2",
+    "node-docker-api": "^1.1.22",
+    "nodemon": "^1.18.2",
+    "request": "^2.87.0",
+    "unirest": "^0.5.1"
+  },
+  "devDependencies": {
+    "babel-cli": "^6.26.0",
+    "babel-preset-es2015": "^6.24.1",
+    "rimraf": "^2.6.2"
+  }
+}
