@@ -18,6 +18,7 @@
     "body-parser": "^1.18.3",
     "cookie-parser": "^1.4.3",
     "docker-service-api": "^17.12.19",
+    "dockerode": "^2.5.5",
     "express": "^4.16.3",
     "http": "0.0.0",
     "influx": "^5.0.7",

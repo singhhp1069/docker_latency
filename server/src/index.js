@@ -12,7 +12,7 @@ var HOST = '127.0.0.1';
 var PORT = 8000;
 var app = express();
 
-var routes = require('./router/routes');
+var routes = require('./routes/routes');
 
 
 app.use(bodyParser.json());
