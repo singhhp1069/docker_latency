@@ -4,6 +4,12 @@ const {Docker} = require('node-docker-api');
 const docker = new Docker({ socketPath: '/var/run/docker.sock' });
 
 module.exports = {
+
+	swarminit: function (callback){
+		docker.swarm.init().then(result =>{
+			callback(result);
+		});
+	},
 	
 	getNodes : function (callback){
 		docker.node.list().then(node =>{

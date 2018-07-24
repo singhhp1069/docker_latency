@@ -2,6 +2,11 @@ var express = require('express');
 var router = express.Router();
 var docker = require('../service/dockerswarm');
 
+router.get('/swarm/init', function (request, response) {
+	// docker.swarminit(function (res) {
+	// 	response.json(res);	
+	// });
+});
 
 router.get('/', function (request, response) {
 	docker.getNodes(function (res) {
