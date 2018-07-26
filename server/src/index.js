@@ -1,25 +1,29 @@
 var express = require('express');
+var app = express();
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
-const http = require('http');
 var influx = require('./db/influx');
-const Influx = require('influx');
-const os = require('os');
+var Influx = require('influx');
+var os = require('os');
 var net = require('net');
 var ip = require('ip');
 var SOCKET_HOST = ip.address() || "127.0.0.1";
-var SOCKET_PORT = process.env.SOCKET_HOST || 3001;
-var app = express();
+var SOCKET_PORT = process.argv[3] || 3001;
+var APPLICATION_PORT = process.argv[2] || 3000;
 var roundTrip = require('./service/routetrip');
-const url = require('url');
-var routes = require('./routes/routes');
+var url = require('url');
+var docker = require('./routes/docker');
+var dockerfunctions = require('./service/dockerswarm');
 
-
+var http = require('http').Server(app);
+var jointoken = '';
 app.set('view engine', 'ejs');
 app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({extended: false}));
+app.use(bodyParser.urlencoded({extended: true}));
 app.use(cookieParser());
-app.use('/',routes);
+
+//api expose for the docker
+app.use('/docker', docker);
 
 
 
@@ -36,7 +40,7 @@ net.createServer(function(sock) {
                           }
                         }), (err, res) => {
                           if(res){
-                            // console.log(JSON.stringify(res.timings));
+                            console.log(JSON.stringify(res.timings));
                                   influx.writePoints([
                                     {
                                       measurement: 'round_trip',
@@ -62,6 +66,33 @@ net.createServer(function(sock) {
                 {
                     console.log("event loop recieved"+JSON.stringify(recieved_data.event_loop_latency));
                       var recieved_latency = recieved_data.event_loop_latency;
+                      
+                      //latency lableling
+                      if(parseFloat(recieved_data.event_loop_latency.avg)>9){
+                          dockerfunctions.getNodes(function(result){
+                            for (var i = 0, len = result.length; i < len; i++) {
+                              dockerfunctions.updateNodeAddLable(result[i].data.ID,{ "quality" :"poor"},function(result1){
+                                console.log("Node updated :"+JSON.stringify(result1));
+                              })
+                            }                             
+                          });
+                      }else if(parseFloat(recieved_data.event_loop_latency.avg)<=9 && parseFloat(recieved_data.event_loop_latency.avg)>5 ){
+                        dockerfunctions.getNodes(function(result){
+                          for (var i = 0, len = result.length; i < len; i++) {
+                            dockerfunctions.updateNodeAddLable(result[i].data.ID,{ "quality" :"average"},function(result1){
+                              console.log("Node updated :"+JSON.stringify(result1));
+                            })
+                          }                             
+                        });
+                    }else if(parseFloat(recieved_data.event_loop_latency.avg)<5){
+                      dockerfunctions.getNodes(function(result){
+                        for (var i = 0, len = result.length; i < len; i++) {
+                          dockerfunctions.updateNodeAddLable(result[i].data.ID,{ "quality" :"good"},function(result1){
+                            console.log("Node updated :"+JSON.stringify(result1));
+                          })
+                        }                             
+                      });
+                  }
                       influx.writePoints([
                         {
                           measurement: 'latency',
@@ -112,17 +143,20 @@ console.log('socket server listening on ' + SOCKET_HOST +':'+ SOCKET_PORT);
 
 
 
-app.listen(3000, function (req, res){
-  console.log("its working");
-})
+http.listen(APPLICATION_PORT, function(){
+  console.log('listening on : '+APPLICATION_PORT);
+});
 
-app.get('/',function (req,res){
-  server_details = {
-    socket_ip : SOCKET_HOST,
-    socket_port : SOCKET_PORT,
-    server_port : 3000
-  }
-  res.render('pages/index',{ server_details: server_details , message: 'Hello there!'});
+app.post('/jointoken',function(req,res){
+    jointoken = req.body.token;
+    res.render('pages/index',{ server_details: { socket_ip : SOCKET_HOST,
+      socket_port : SOCKET_PORT,
+      server_port : APPLICATION_PORT,
+      token : jointoken
+    } , message: 'Hello there!'});
+
+});
+
   //     influx.query(`
   //   select * from round_trip
   //   order by time desc
@@ -132,4 +166,25 @@ app.get('/',function (req,res){
   // }).catch(err => {
   //   res.status(500).send(err.stack)
   // })
+
+app.get('/',function (req,res){
+  res.render('pages/index',{ server_details: { socket_ip : SOCKET_HOST,
+                                socket_port : SOCKET_PORT,
+                                server_port : APPLICATION_PORT,
+                                token : jointoken
+                              } , message: 'Hello there!'});
 });
+
+
+app.get('/getdockernode',function(req,res){
+  dockerfunctions.getNodes(function (result) {
+    res.render('pages/index',{ server_details: { socket_ip : SOCKET_HOST,
+      socket_port : SOCKET_PORT,
+      server_port : APPLICATION_PORT,
+      token : jointoken,
+      docker_nodes : result
+    } , message: 'Hello there!'});
+	});
+  
+})
+
