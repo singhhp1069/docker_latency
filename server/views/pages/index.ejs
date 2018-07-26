@@ -1,0 +1,95 @@
+<!-- views/pages/index.ejs -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <% include ../partials/head %>
+</head>
+<body class="container">
+
+<header>
+    <% include ../partials/header %>
+</header>
+
+<main>
+        <div class="container">
+
+                <table class="table table-striped">
+                        <thead>
+                          <tr>
+                            <th scope="col">Server Details</th>
+                            <th scope="col">Server Docker Details</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <tr>
+                            <td>
+                                    <div class="card" style="width: 18rem;">
+                                            <div class="card-body">
+                                              <h5 class="card-title">Socket IP : <%= server_details.socket_ip %></h5>
+                                              <h6 class="card-subtitle mb-2 text-muted">Socket PORT : <%= server_details.socket_port %></h6>
+                                              
+                                            </div>
+                                          </div>
+                            </td>
+                            
+                            <td>
+                                    <div class="card" style="width: 18rem;">
+                                            <div class="card-body">
+                                              <h5 class="card-title">Card title</h5>
+                                              <h6 class="card-subtitle mb-2 text-muted">Card subtitle</h6>
+                                              <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+                                              <a href="#" class="card-link">Card link</a>
+                                              <a href="#" class="card-link">Another link</a>
+                                            </div>
+                                          </div>
+                            </td>
+                          </tr>
+                
+                        </tbody>
+                      </table>
+
+                <table class="table table-striped">
+                        <thead>
+                          <tr>
+                            <th scope="col">Client Details</th>
+                            <th scope="col">Docker Details</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <tr>
+                            <td>
+                                    <div class="card" style="width: 18rem;">
+                                            <div class="card-body">
+                                              <h5 class="card-title">Card title</h5>
+                                              <h6 class="card-subtitle mb-2 text-muted">Card subtitle</h6>
+                                              <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+                                              <a href="#" class="card-link">Card link</a>
+                                              <a href="#" class="card-link">Another link</a>
+                                            </div>
+                                          </div>
+                            </td>
+                            
+                            <td>
+                                    <div class="card" style="width: 18rem;">
+                                            <div class="card-body">
+                                              <h5 class="card-title">Card title</h5>
+                                              <h6 class="card-subtitle mb-2 text-muted">Card subtitle</h6>
+                                              <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+                                              <a href="#" class="card-link">Card link</a>
+                                              <a href="#" class="card-link">Another link</a>
+                                            </div>
+                                          </div>
+                            </td>
+                          </tr>
+                
+                        </tbody>
+                      </table>
+</main>
+
+<footer>
+    <% include ../partials/footer %>
+</footer>
+
+</body>
+</html>

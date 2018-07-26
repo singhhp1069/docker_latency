@@ -1,15 +1,30 @@
  var http = require('http');
-var unirest = require('unirest');
 const {Docker} = require('node-docker-api');
 const docker = new Docker({ socketPath: '/var/run/docker.sock' });
+
 
 module.exports = {
 
 	swarminit: function (callback){
-		docker.swarm.init().then(result =>{
-			callback(result);
+		var option = {
+			"ListenAddr": "0.0.0.0:2377",
+			"AdvertiseAddr": "192.168.1.1:2377",
+			"ForceNewCluster": false,
+			"Spec": {
+			  "Orchestration": {},
+			  "Raft": {},
+			  "Dispatcher": {},
+			  "CAConfig": {}
+			}
+		  };
+		docker.swarm.init(option).then(res=>{
+			console.log("response is : "+res);
+			callback(res);
+		}).catch(err=>{
+			console.log("error is :"+err);
+			callback(err);
 		});
-	},
+		},
 	
 	getNodes : function (callback){
 		docker.node.list().then(node =>{
